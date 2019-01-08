@@ -1,13 +1,18 @@
 // VARIABLES
 
-var gulp          = require('gulp');
-var uglify        = require('gulp-uglify');
-var cleanCSS      = require('gulp-clean-css');
-var concat        = require('gulp-concat');
-var sass          = require('gulp-sass');
+var gulp            = require('gulp');
+var uglify          = require('gulp-uglify');
+var concat          = require('gulp-concat');
+var sass            = require('gulp-sass');
+var sourcemaps      = require('gulp-sourcemaps');
+var cleanCSS        = require('gulp-clean-css');
+var minifyCSS       = require('gulp-minify-css');
+var purgeSourcemaps = require('gulp-purge-sourcemaps');
+var browserSync     = require('browser-sync').create();
+var autoreload      = browserSync.reload;
 
 const folders = {
-    name: '',
+    name: 'projectname',
     extension: '.localhost'
 };
 
@@ -25,6 +30,14 @@ var paths = {
         ],
     }
 };
+
+// BROWSER-SYNC
+
+gulp.task('browser-sync', ['sass'], function() {
+    browserSync.init({
+      proxy: 'http://cashquiz.localhost'
+    });
+});
 
 // WATCH
 
@@ -44,9 +57,7 @@ gulp.task('files', function() {
 // JAVASCRIPT
 
 gulp.task('js', function () {
-  return gulp.src([
-    'js/script.js'
-    ])
+  return gulp.src(paths.scripts.files)
     .pipe(uglify())
     .pipe(concat('app.js'))
     .pipe(gulp.dest('build'));
@@ -55,9 +66,19 @@ gulp.task('js', function () {
 // SASS
 
 gulp.task('sass', function () {
-  gulp.src('css/template.scss')
-    .pipe(sass())
-    .pipe(gulp.dest('css'));
+  gulp.src(paths.styles.files)
+    .pipe(sourcemaps.init())
+    .pipe(sass().on('error', sass.logError))
+    .pipe(autoprefixer({
+      browsers: ['last 2 versions'],
+      cascade: false
+    }))
+    .pipe(gulp.dest(paths.styles.dest))
+    .pipe(purgeSourcemaps())
+    .pipe(minifyCSS({keepSpecialComments:0, processImport: false}))
+    .pipe(rename({suffix: '.min'}))
+    .pipe(gulp.dest(paths.styles.dest))
+    .pipe(gulpif(autoreload,browserSync.stream({match:"**/*.css"})));
 });
 
 // CSS
