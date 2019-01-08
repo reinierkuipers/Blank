@@ -10,6 +10,8 @@
 *.vi
 *~
 *.sass-cache
+*.css.map
+*.map
 
 # OS or Editor folders
 .DS_Store
@@ -24,10 +26,6 @@ nbproject
 *.sublime-project
 *.sublime-workspace
 
-# Komodo
-*.komodoproject
-.komodotools
-
 # Folders to ignore
 .hg
 .svn
@@ -35,3 +33,7 @@ nbproject
 .idea
 node_modules
 dist
+
+# Joomla
+/templates/geldtype-quiz/css/main.css
+configuration.php
