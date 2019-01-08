@@ -4,14 +4,32 @@ var gulp          = require('gulp');
 var uglify        = require('gulp-uglify');
 var cleanCSS      = require('gulp-clean-css');
 var concat        = require('gulp-concat');
-var less          = require('gulp-less');
 var sass          = require('gulp-sass');
+
+const folders = {
+    name: '',
+    extension: '.localhost'
+};
+
+var paths = {
+    styles: {
+        src: './templates/' + folders.name + '/scss',
+        files: './templates/' + folders.name + '/scss/**/*.scss',
+        dest: './templates/' + folders.name + '/css'
+    },
+    scripts: {
+        src: './templates/' + folders.name + '/js',
+        files: [
+            './templates/' + folders.name + '/js/vendor/*.js',
+            './templates/' + folders.name + '/assets/js/*.js',
+        ],
+    }
+};
 
 // WATCH
 
 gulp.task('watch', function(){
   gulp.watch('js/**/*.js',['js']);
-  gulp.watch('css/**/*.less',['less']);
   gulp.watch('css/**/*.scss',['sass']);
   gulp.watch('css/**/*.css',['css']);
 });
@@ -32,14 +50,6 @@ gulp.task('js', function () {
     .pipe(uglify())
     .pipe(concat('app.js'))
     .pipe(gulp.dest('build'));
-});
-
-// LESS
-
-gulp.task('less', function () {
-  gulp.src('css/template.less')
-    .pipe(less())
-    .pipe(gulp.dest('css'));
 });
 
 // SASS
@@ -64,4 +74,4 @@ gulp.task('css', function () {
 
 // DEFAULT
 
-gulp.task('default', ['files','js','less','sass','css','watch']);
+gulp.task('default', ['files','js','sass','css','watch']);
